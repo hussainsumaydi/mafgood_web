@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}البلاغات - مفقود{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="fw-bold mb-4"><i class="bi bi-flag text-danger"></i> جميع البلاغات</h2>
+    <div class="card p-3">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr><th>#</th><th>السبب</th><th>الغرض</th><th>المُبلّغ</th><th>الحالة</th><th>الإجراء</th></tr>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                    <tr>
+                        <td>{{ report.id }}</td>
+                        <td>{{ report.reason[:60] }}</td>
+                        <td><a href="{{ url_for('items.item_detail', item_id=report.item_id) }}">#{{ report.item_id }}</a></td>
+                        <td>{{ report.reporter.username }}</td>
+                        <td>
+                            {% if report.status == 'pending' %}<span class="badge bg-warning text-dark">معلق</span>
+                            {% elif report.status == 'reviewed' %}<span class="badge bg-success">تمت المراجعة</span>
+                            {% else %}<span class="badge bg-secondary">مرفوض</span>{% endif %}
+                        </td>
+                        <td>
+                            <form method="POST" action="{{ url_for('admin.update_report_status', report_id=report.id) }}" class="d-inline">
+                                <input type="hidden" name="status" value="reviewed">
+                                <button class="btn btn-sm btn-success">مراجعة</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('admin.update_report_status', report_id=report.id) }}" class="d-inline">
+                                <input type="hidden" name="status" value="dismissed">
+                                <button class="btn btn-sm btn-secondary">رفض</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

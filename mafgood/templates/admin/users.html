@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}إدارة المستخدمين - مفقود{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="fw-bold mb-4"><i class="bi bi-people text-primary"></i> إدارة المستخدمين</h2>
+    <div class="card p-3">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr><th>#</th><th>الاسم</th><th>اسم المستخدم</th><th>البريد</th><th>الحالة</th><th>الإجراءات</th></tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.full_name }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            {% if user.profile_status == 'active' %}<span class="badge bg-success">نشط</span>
+                            {% elif user.profile_status == 'suspended' %}<span class="badge bg-warning text-dark">موقوف</span>
+                            {% else %}<span class="badge bg-danger">محظور</span>{% endif %}
+                        </td>
+                        <td class="d-flex gap-1 flex-wrap">
+                            {% if not user.is_admin %}
+                            <form method="POST" action="{{ url_for('admin.suspend_account', user_id=user.id) }}" class="d-inline">
+                                <button class="btn btn-sm btn-warning">تعليق</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('admin.block_profile', user_id=user.id) }}" class="d-inline">
+                                <button class="btn btn-sm btn-danger">حظر</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('admin.activate_account', user_id=user.id) }}" class="d-inline">
+                                <button class="btn btn-sm btn-success">تفعيل</button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
